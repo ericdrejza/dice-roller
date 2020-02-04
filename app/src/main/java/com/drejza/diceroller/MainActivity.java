@@ -8,12 +8,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableRow;
+import android.widget.Toast;
+
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
 
     private Roll roll;
+    private Stack<Dice> formulaHistory;
 
 
 
@@ -23,14 +28,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.roll = new Roll();
-
     }
 
-    protected void toLists(View view){
-        //Intent intent = new Intent(this, .class);
+    public void toList(View view){
+        Intent intent = new Intent(this, FormulaListActivity.class);
+        startActivity(intent);
+    }
 
 
-        //startActivity(intent);
+    // sends a toast
+    public void toastHello(View view){
+        Toast.makeText(getApplicationContext(),"Hello", Toast.LENGTH_SHORT).show();
+
     }
 
     public void update(){

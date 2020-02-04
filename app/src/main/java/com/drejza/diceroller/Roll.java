@@ -39,18 +39,19 @@ public class Roll {
     private int[] dice;  // each index represents the number of the type of die
                              // [d100, d20, d12, d10, d8, d6, d4]
 
-    private int value;
-    private int perDieMod;
     private int flatMod;
+    private int perDieMod;
+    private int value;
+    private String name;
 
 
     /** Contructors */
     public Roll(){
-        dice = new int[]{0, 0, 0, 0, 0, 0, 0};
-        value = 0;
-        perDieMod = 0;
-        flatMod = 0;
-
+        this.name = null;
+        this.dice = new int[]{0, 0, 0, 0, 0, 0, 0};
+        this.perDieMod = 0;
+        this.flatMod = 0;
+        this.value = 0;
     }
 
     public Roll(String roll){
@@ -128,6 +129,27 @@ public class Roll {
         dice[Dice.indexOfDieType(die)] += count;
     }
 
+    public Roll(int[] dice, int flatMod){
+        try{
+            if (dice.length > 7){
+                throw (new Exception("dice array too big; set roll to default zeros"));
+            }
+            else {
+                this.dice = dice;
+                this.flatMod = flatMod;
+                this.perDieMod = 0;
+                this.value = 0;
+            }
+        }
+        catch(Exception excp){
+            Log.e("Roll", excp.getMessage());
+            this.dice = new int[]{0,0,0,0,0,0,0};
+            this.flatMod = 0;
+            this.perDieMod = 0;
+            this.value = 0;
+        }
+    }
+
     /** GETTERS & SETTERS */
     public int[] getDice() {
         return dice;
@@ -161,16 +183,26 @@ public class Roll {
         this.flatMod = flatMod;
     }
 
-    public void addDie(int die){
+    public void resetDice(){
+        for (int i = 0; i < dice.length; i++){
+            this.dice[i] = 0;
+        }
+    }
 
+    public void resetRoll(){
+        resetDice();
+
+        setFlatMod(0);
     }
 
     /** METHODS */
-
+    // Rolls the dice of the roll with random values and returns the sum
     public int roll(){
         Random random = new Random(System.currentTimeMillis());
 
-        this.value = this.flatMod;
+        this.value = this.flatMod;  // make the start of the roll the flat mod
+
+        // roll for each die in the array and add to the sum
         for (int i = 0; i < dice.length; i++){
             for (int j = 0; j < dice[i]; j++){
                 this.value += (Dice.dieTypeByIndex(i).getNumSides() * Math.random()) + 1;
@@ -179,6 +211,15 @@ public class Roll {
         return this.value;
     }
 
+    // increase the value by 1 at the index of the specified die type
+    public void addDie(Dice die){
+        int index = Dice.indexOfDieType(die);
+        dice[index] =  dice[index] + 1;
+    }
+
+
+
+    /** MISC METHODS */
 
     public static int intFromString(String string){
         int i = 0;

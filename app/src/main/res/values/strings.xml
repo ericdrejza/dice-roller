@@ -19,11 +19,11 @@
     <string name="textView_rowName3">Name</string>
     <string name="textView_rowName4">Name</string>
     <string name="textView_rowName5">Name</string>
-    <string name="textView_rollValue1"></string>
-    <string name="textView_rollValue2"></string>
-    <string name="textView_rollValue3"></string>
-    <string name="textView_rollValue4"></string>
-    <string name="textView_rollValue5"></string>
+    <string name="textView_rollValue1">roll Val 1</string>
+    <string name="textView_rollValue2">roll Val 2</string>
+    <string name="textView_rollValue3">roll Val 3</string>
+    <string name="textView_rollValue4">roll Val 4</string>
+    <string name="textView_rollValue5">roll Val 5</string>
     <string name="button_navBarMiddle">Roller</string>
     <string name="button_navBarRight">List</string>
 

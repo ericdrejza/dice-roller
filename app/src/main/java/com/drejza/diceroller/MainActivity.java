@@ -4,21 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TableRow;
 import android.widget.Toast;
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
 
     private Roll roll;
-    private Stack<Dice> formulaHistory;
+    private Stack<Die> formulaHistory;
 
 
 

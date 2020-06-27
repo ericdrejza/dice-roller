@@ -1,4 +1,5 @@
 <resources>
+    <string name="nav_left">Settings</string>
     <string name="app_name">Dice Roller</string>
     <string name="button_d4">D4</string>
     <string name="button_d6">D6</string>

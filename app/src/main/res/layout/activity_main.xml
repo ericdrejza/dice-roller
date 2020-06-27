@@ -7,6 +7,22 @@
     android:background="@android:color/darker_gray"
     tools:context=".MainActivity">
 
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation" />
+<!--
     <Button
         android:id="@+id/button_roll"
         android:layout_width="wrap_content"
@@ -172,7 +188,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button"
+                android:text="@string/nav_left"
                 android:textColor="@color/design_default_color_primary_dark"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -376,7 +392,7 @@
                 android:textSize="18sp" />
 
             <Spinner
-                android:id="@+id/spinner_favories_row4"
+                android:id="@+id/spinner_favorites_row4"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:entries="@array/row_options" />
@@ -464,5 +480,6 @@
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/button_roll"
         app:layout_constraintVertical_bias="0.0" />
+-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,21 +1,20 @@
 package com.drejza.diceroller;
 
-public enum Die {
+public enum Die implements Rollable{
 
-    D4(4, 0),
-    D6(6, 1),
-    D8(8, 2),
-    D10(10, 3),
-    D12(12, 4),
-    D20(20, 5),
-    D100(100,6);
+    D4(4),
+    D6(6),
+    D8(8),
+    D10(10),
+    D12(12),
+    D20(20),
+    D100(100);
 
     private int numSides;
     private int diceIndex;
 
-    Die(int numSides, int diceIndex){
+    Die(int numSides){
         this.numSides = numSides;
-        this.diceIndex = diceIndex;
     }
 
     public int getNumSides(){
@@ -48,4 +47,8 @@ public enum Die {
         return null;
     }
 
+    @Override
+    public int roll() {
+        return (int) (Math.random()*numSides) + 1;
+    }
 }

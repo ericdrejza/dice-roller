@@ -20,8 +20,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
+        app:labelVisibilityMode="selected"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_navigation" />
+        app:menu="@menu/bottom_navigation"
+        app:itemTextAppearanceActive="@color/bottom_nav_bar_colors"
+        app:itemTextAppearanceInactive="@color/bottom_nav_bar_colors"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 <!--
     <Button
         android:id="@+id/button_roll"
@@ -481,5 +487,3 @@
         app:layout_constraintTop_toBottomOf="@+id/button_roll"
         app:layout_constraintVertical_bias="0.0" />
 -->
-
-</androidx.constraintlayout.widget.ConstraintLayout>

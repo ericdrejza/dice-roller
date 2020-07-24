@@ -18,6 +18,6 @@ class ListFragment extends Fragment {
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_list, container, false);
+    return inflater.inflate(R.layout.list_fragment, container, false);
   }
 }

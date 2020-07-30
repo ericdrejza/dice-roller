@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -13,12 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class RollerFragment extends Fragment {
 
+  private Stack<Die> diceStack;
+  private String formula;
+  private ArrayList<Die> rollHistory;
   private Roll roll;
-  private Stack<Die> formulaHistory;
 
   @Override
   public void onCreate(Bundle savedInstanceState){
@@ -26,6 +28,9 @@ public class RollerFragment extends Fragment {
 
     getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
+    diceStack = new Stack<Die>();
+    formula = "";
+    rollHistory = new ArrayList<Die>();
     roll = new Roll();
   }
 
@@ -42,6 +47,8 @@ public class RollerFragment extends Fragment {
 
 
   public void setupDiceButtons(View view) {
+    // Dynamically add the correct die types to each of these DiceButtons and
+    // set the appropriate text to the buttons too
 
     final MaterialButton d4_button = view.findViewById(R.id.d4_button);
     final MaterialButton d6_button = view.findViewById(R.id.d6_button);
@@ -65,8 +72,21 @@ public class RollerFragment extends Fragment {
       diceButtons[i].setText(dice_button_resource_ids[i]);
     }
 
-    // Dynamically add the correct die types to each of these DiceButtons and
-    // set the appropriate text to the buttons too
   }
+
+
+  // TODO: Add dice to stack and update formula
+  public void addDie(Die die) {
+    diceStack.push(die);
+
+  }
+
+  // Update formula based on Roll toString()
+  public void updateString(Die die) {
+
+  }
+
+
+  // TODO: Remove die from stack when pressing undo, and clearing formula when holding undo
 
 }

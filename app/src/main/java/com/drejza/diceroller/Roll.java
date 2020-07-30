@@ -2,6 +2,7 @@ package com.drejza.diceroller;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
 import java.util.Scanner;
@@ -20,19 +21,34 @@ public class Roll implements Rollable {
   private EnumMap<Die, Integer> dice;
   private int mod;
   private String name;
+  private ArrayList<Roll> separatedRolls;
   private int value;
 
+  // TODO: Figure out what I want to use to track individual rolls
+  // an int[] or an ArrayList<Integer> would be nice, but I have to make sure that I get it
+  // to line up with the dice in the formula so that everything is printed in order.
+  // The other idea is to create an ArrayList of individual rolls and then sum their values.
 
   /** Contructors */
   public Roll(){
     name = null;
     mod = 0;
     value = 0;
+    separatedRolls = new ArrayList<Roll>();
 
     dice = new EnumMap<>(Die.class);
     for (Die die : Die.values()) {
-      dice.put(die, new Integer(0));
+      dice.put(die, 0);
     }
+  }
+
+  public Roll(Die die){
+    name = die.getName();
+    mod = 0;
+    separatedRolls = null;
+    dice = new EnumMap<>(Die.class);
+    dice.put(die, 1);
+    value = die.roll();
   }
 
   /** GETTERS & SETTERS */
@@ -68,38 +84,75 @@ public class Roll implements Rollable {
     this.value = value;
   }
 
+  public int getNumDice() {
+    int totalDice = 0;
+
+    for (Die die : dice.keySet()) {
+      if (dice.get(die) != null)
+        totalDice += dice.get(die);
+    }
+
+    return totalDice;
+  }
 
 
   /** METHODS */
 
   // increase the value of the Integer by 1 for the specified die type
   public void addDie(Die die){
-    dice.put(die, new Integer(dice.get(die).intValue() + 1 ));
+    dice.put(die, dice.get(die) + 1 );
   }
 
   // Sets every Die to map to an Integer with a value of 0
   public void resetDice(){
     for (Die die : Die.values()) {
-      dice.put(die, new Integer(0));
+      dice.put(die, 0);
     }
+    resetSeparatedRolls();
   }
 
   // resets dice and sets value and mod to 0
   public void resetRoll(){
     resetDice();
+    resetSeparatedRolls();
     mod = 0;
+    value = 0;
+  }
+
+  // reset individual rolls
+  public void resetSeparatedRolls(){
+    separatedRolls = new ArrayList<Roll>();
+  }
+
+  // reset products of roll
+  public void resetProducts(){
+    resetSeparatedRolls();
     value = 0;
   }
 
   // Rolls the dice of the roll with random values and returns the sum
   public int roll(){
-
     value = mod;  // make the start of the roll equal to the mod
+    int numDice = getNumDice();
+
+    if (numDice == 0) {
+      return value;
+    }
+    else if (numDice == 1) {
+      for (Die die : dice.keySet()) {
+        if (dice.get(die) != null){
+
+        }
+      }
+    }
 
     // roll for each die in the map and add to the sum
     for (Die die : dice.keySet()){
-      for (int i = 0; i < dice.get(die).intValue(); i++){
-        value += die.roll();
+      Integer numOfDiceType = dice.get(die);
+      if (numOfDiceType != null) {
+        for (int i = 0; i < numOfDiceType; i++) {
+          separatedRolls.add(new Roll(die));
+        }
       }
     }
     return value;
@@ -125,10 +178,50 @@ public class Roll implements Rollable {
   }
 
 
+  // String Format: *Formula = separated rolls = sum*
+  @Override
+  public String toString(){
+    String formula = "";
+    int totalDice = 0;
+    int count = 0;
+
+    totalDice = getNumDice();
+
+    for (Die die : dice.keySet()) {
+      Integer numOfDiceType = dice.get(die);
+      count += numOfDiceType;
+      if (numOfDiceType > 0) {
+        formula = formula + numOfDiceType + die;
+      }
+
+      if (count == totalDice)
+        break;
+      else
+        formula = formula + " + ";
+    }
+
+    if (mod > 0) {
+      formula = formula + " + " + mod;
+    }
+    else if (mod < 0) {
+      String modText = String.valueOf(Math.abs(mod));
+      formula = formula + " - " + modText;
+    }
+
+    return formula;
+  }
 
   // MAIN
   public static void main(String[] args){
-    System.out.print("hello");
+    Roll roll_a = new Roll();
+    roll_a.addDie(Die.D4);
+    roll_a.addDie(Die.D6);
+    roll_a.addDie(Die.D8);
+
+    Roll roll_b = new Roll();
+
+    System.out.println(roll_a);
+    System.out.println(roll_b);
   }
 
 }

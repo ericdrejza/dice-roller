@@ -16,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="1.0">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/roll_history"
@@ -71,6 +71,7 @@
 
         </androidx.core.widget.NestedScrollView>
 
+        <!-- Clear History Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/clear_history_button"
             android:layout_width="wrap_content"
@@ -78,7 +79,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="258dp"
             android:layout_marginBottom="32dp"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/purple"
             android:text="@string/button_clear_history"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/formula_input"
@@ -101,6 +102,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clear_history_button"
             app:layout_constraintVertical_chainStyle="spread" />
+
+        <Spinner
+            android:id="@+id/roll_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="end"
+            android:entries="@array/roll_options"
+            app:layout_constraintBottom_toTopOf="@+id/formula_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/roll_value"
+            app:layout_constraintTop_toBottomOf="@+id/clear_history_button" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/formula_input"
@@ -223,7 +238,7 @@
                 android:id="@+id/undo_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/red"
+                android:backgroundTint="@color/dark_red"
                 android:text="@string/button_undo"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -238,7 +253,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
-                android:backgroundTint="#00c500"
+                android:backgroundTint="@color/green"
                 android:text="@string/roll"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -252,7 +267,7 @@
                 android:id="@+id/mod_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/blue"
+                android:backgroundTint="@color/navy"
                 android:text="@string/button_modify"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"

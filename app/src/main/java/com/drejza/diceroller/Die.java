@@ -2,41 +2,31 @@ package com.drejza.diceroller;
 
 public enum Die implements Rollable{
 
-    D4(4),
-    D6(6),
-    D8(8),
-    D10(10),
-    D12(12),
-    D20(20),
-    D100(100);
+    D4(4, "d4"),
+    D6(6, "d6"),
+    D8(8, "d8"),
+    D10(10, "d10"),
+    D12(12, "d12"),
+    D20(20, "d20"),
+    D100(100, "d100");
 
     private int numSides;
-    private int diceIndex;
+    private String name;
 
-    Die(int numSides){
+    Die(int numSides, String name){
         this.numSides = numSides;
+        this.name = name;
     }
 
     public int getNumSides(){
         return this.numSides;
     }
 
-    public int getDiceIndex(){
-        return this.diceIndex;
+    public String getName() {
+        return name;
     }
-
 
     /** MISC METHODS */
-    // consumes a die type and returns the index it would be found at in the array
-
-    public static Die dieTypeByIndex(int dieIndex){
-        for (Die die : Die.values()) {
-            if (dieIndex == die.getDiceIndex()){
-                return die;
-            }
-        }
-        return null;
-    }
 
     public static Die dieTypeByNumSides(int numSides){
         for (Die die : Die.values()){
@@ -50,5 +40,10 @@ public enum Die implements Rollable{
     @Override
     public int roll() {
         return (int) (Math.random()*numSides) + 1;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

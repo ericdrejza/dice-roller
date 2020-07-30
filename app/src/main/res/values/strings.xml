@@ -45,6 +45,12 @@
         <item>Export</item>
     </string-array>
 
+    <string-array name="roll_options">
+        <item>""</item>
+        <item>Advantage</item>
+        <item>Disadvantage</item>
+    </string-array>
+
     <!-- Nav Strings -->
     <string name="list">List</string>
     <string name="roll">Roll</string>

@@ -135,93 +135,91 @@ public class Roll implements Rollable {
     value = mod;  // make the start of the roll equal to the mod
     int numDice = getNumDice();
 
-    if (numDice == 0) {
-      return value;
-    }
-    else if (numDice == 1) {
+    if (numDice == 1) {
       for (Die die : dice.keySet()) {
-        if (dice.get(die) != null){
-
+        Integer numOfDiceType = dice.get(die);
+        if (numOfDiceType != null){
+          for (int i = 0; i < numOfDiceType; i++) {
+            value += die.roll();
+          }
         }
       }
     }
-
-    // roll for each die in the map and add to the sum
-    for (Die die : dice.keySet()){
-      Integer numOfDiceType = dice.get(die);
-      if (numOfDiceType != null) {
-        for (int i = 0; i < numOfDiceType; i++) {
-          separatedRolls.add(new Roll(die));
+    else if (numDice > 1) {
+      // roll for each die in the map and add to the sum
+      for (Die die : dice.keySet()) {
+        Integer numOfDiceType = dice.get(die);
+        if (numOfDiceType != null) {
+          for (int i = 0; i < numOfDiceType; i++) {
+            separatedRolls.add(new Roll(die));
+            value += separatedRolls.get(i).roll();
+          }
         }
       }
     }
+    setValue(value);
     return value;
   }
 
 
   /** MISC METHODS */
 
-  public static int intFromString(String string){
-    int i = 0;
-    char c = string.charAt(i);
-    int value = 0;
-
-    while(Character.isDigit(c)){
-
-      value = value * 10;
-      value += (int)c + CHAR_DIGIT_TO_INT_OFFSET;
-
-      i++;
-      c = string.charAt(i);
-    }
-    return value;
-  }
-
-
   // String Format: *Formula = separated rolls = sum*
   @Override
   public String toString(){
-    String formula = "";
+    String string = "";
     int totalDice = 0;
     int count = 0;
 
     totalDice = getNumDice();
 
+    // start formula portion of string
     for (Die die : dice.keySet()) {
       Integer numOfDiceType = dice.get(die);
       count += numOfDiceType;
       if (numOfDiceType > 0) {
-        formula = formula + numOfDiceType + die;
+        string = string + numOfDiceType + die;
       }
 
       if (count == totalDice)
         break;
       else
-        formula = formula + " + ";
+        string = string + " + ";
     }
 
     if (mod > 0) {
-      formula = formula + " + " + mod;
+      string = string + " + " + mod;
     }
     else if (mod < 0) {
       String modText = String.valueOf(Math.abs(mod));
-      formula = formula + " - " + modText;
+      string = string + " - " + modText;
+    }
+    // end formula string
+
+    // start separated rolls portion of string
+    for (int i = 0; i < separatedRolls.size(); i++) {
+
     }
 
-    return formula;
+    // end separated rolls
+
+    string = string + " = " + value;
+
+    return string;
   }
 
   // MAIN
   public static void main(String[] args){
-    Roll roll_a = new Roll();
-    roll_a.addDie(Die.D4);
-    roll_a.addDie(Die.D6);
-    roll_a.addDie(Die.D8);
-
-    Roll roll_b = new Roll();
-
-    System.out.println(roll_a);
-    System.out.println(roll_b);
+    System.out.println("Hello");
+//    Roll roll_a = new Roll();
+//    roll_a.addDie(Die.D4);
+//    roll_a.addDie(Die.D6);
+//    roll_a.addDie(Die.D8);
+//
+//    Roll roll_b = new Roll();
+//
+//    System.out.println("Roll-A: " + roll_a);
+//    System.out.println(roll_b);
   }
 
 }

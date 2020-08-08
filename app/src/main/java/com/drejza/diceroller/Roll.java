@@ -6,7 +6,7 @@ import java.util.EnumMap;
 
 public class Roll implements Rollable {
 
-  public static final int CHAR_DIGIT_TO_INT_OFFSET = -48;
+  //public static final int CHAR_DIGIT_TO_INT_OFFSET = -48;
 
   //private static final String ROLL_REGEX_PATTERN_STRING = "\\s*(\\d*)[d]([4, 6, 8, 10, 12, 20, 100])\\s*([+, -]?)\\s*(\\d*)\\s*";
   //     $1                $2                     $3       $4
@@ -30,7 +30,7 @@ public class Roll implements Rollable {
     name = "";
     mod = 0;
     value = 0;
-    separatedRolls = new ArrayList<Roll>();
+    separatedRolls = new ArrayList<>();
 
     dice = new EnumMap<>(Die.class);
     for (Die die : Die.values()) {
@@ -82,10 +82,13 @@ public class Roll implements Rollable {
 
   public int getNumDice() {
     int totalDice = 0;
+    Integer numOfType;
 
     for (Die die : dice.keySet()) {
-      if (dice.get(die) != null)
-        totalDice += dice.get(die);
+      numOfType = dice.get(die);
+      if (numOfType != null) {
+        totalDice += numOfType;
+      }
     }
 
     return totalDice;
@@ -96,7 +99,10 @@ public class Roll implements Rollable {
 
   // increase the value of the Integer by 1 for the specified die type
   public void addDie(Die die){
-    dice.put(die, dice.get(die) + 1 );
+    Integer numCurrDice = dice.get(die);
+    if (numCurrDice != null){
+      dice.put(die, numCurrDice + 1 );
+    }
   }
 
   // loop addDie a number of times
@@ -108,7 +114,7 @@ public class Roll implements Rollable {
 
   // reset individual rolls
   public void resetSeparatedRolls(){
-    separatedRolls = new ArrayList<Roll>();
+    separatedRolls = new ArrayList<>();
   }
 
   // reset products of roll
@@ -166,8 +172,10 @@ public class Roll implements Rollable {
 
   /** MISC METHODS */
   public Die findFirstExistingDieInDice(){
+    Integer numOfDiceType;
     for (Die die : dice.keySet()){
-      if (dice.get(die) > 0){
+      numOfDiceType = dice.get(die);
+      if (numOfDiceType != null && numOfDiceType > 0){
         return die;
       }
     }
@@ -194,7 +202,7 @@ public class Roll implements Rollable {
 
   // returns the formula of the roll as a string
   public String formulaString() {
-    String string = "";
+    StringBuilder string = new StringBuilder();
     int totalDice = getNumDice();
     int count = 0;
 
@@ -204,26 +212,26 @@ public class Roll implements Rollable {
 
     for (Die die : dice.keySet()) {
       Integer numOfDiceType = dice.get(die);
-      count += numOfDiceType;
-      if (numOfDiceType > 0) {
-        string = string + numOfDiceType + die;
+      if (numOfDiceType != null && numOfDiceType> 0) {
+        count += numOfDiceType;
+        string.append(numOfDiceType).append(die);
 
         if (count == totalDice)
           break;
         else
-          string = string + " + ";
+          string.append(" + ");
       }
     }
 
-    string = string + modString();
+    string.append(modString());
 
-    return string;
+    return string.toString();
   }
 
 
   // returns the values of each rolled die grouped in parentheses by die type
   public String separatedRollString() {
-    String string = "(";
+    StringBuilder string = new StringBuilder("(");
     Die prevDieType = null;
     Die currDieType;
     Roll currSeparateRoll;
@@ -234,7 +242,7 @@ public class Roll implements Rollable {
       return String.valueOf(mod);
     }
     else if (numDice == 1) {
-      string = string + (value - mod) + ")";
+      string.append(value - mod).append(")");
     }
     else {
       for (int i = 0; i < separatedRolls.size(); i++) {
@@ -242,27 +250,27 @@ public class Roll implements Rollable {
         currDieType = currSeparateRoll.findFirstExistingDieInDice();
 
         if (currDieType == prevDieType || prevDieType == null) {
-          string = string + currSeparateRoll.getValue();
+          string.append(currSeparateRoll.getValue());
           if (i + 1 < separatedRolls.size()){
             if (separatedRolls.get(i+1).findFirstExistingDieInDice() == currDieType) {
-              string = string + " + ";
+              string.append(" + ");
             }
           }
         } else {
-          string = string + ") + (" + currSeparateRoll.getValue();
+          string.append(") + (").append(currSeparateRoll.getValue());
         }
 
         prevDieType = currDieType;
 
         if (i == separatedRolls.size() - 1) {
-          string = string + ")";
+          string.append(")");
         }
       }
     }
 
-    string = string + modString();
+    string.append(modString());
 
-    return string;
+    return string.toString();
   }
 
   // String Format: *Formula = separated rolls = sum*
@@ -270,7 +278,7 @@ public class Roll implements Rollable {
   public String toString() {
     // start the string as the formula string
     String string = name;
-    if (name != null && name != "") {
+    if (name != null && !name.equals("")) {
       string = string + ": ";
     }
     string = string + formulaString();
@@ -285,12 +293,12 @@ public class Roll implements Rollable {
   }
 
   public String repeatRollsString(int numRepeats) {
-    String string = "";
+    StringBuilder string = new StringBuilder();
     for (int i = 0; i < numRepeats; i++) {
       this.roll();
-      string = string + "\n" + this.toString();
+      string.append("\n").append(this.toString());
     }
-    return string;
+    return string.toString();
   }
 
   // MAIN

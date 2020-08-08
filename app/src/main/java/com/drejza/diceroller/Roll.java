@@ -1,11 +1,7 @@
 package com.drejza.diceroller;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.Random;
-import java.util.Scanner;
 
 
 public class Roll implements Rollable {
@@ -31,7 +27,7 @@ public class Roll implements Rollable {
 
   /** Contructors */
   public Roll(){
-    name = null;
+    name = "";
     mod = 0;
     value = 0;
     separatedRolls = new ArrayList<Roll>();
@@ -103,20 +99,11 @@ public class Roll implements Rollable {
     dice.put(die, dice.get(die) + 1 );
   }
 
-  // Sets every Die to map to an Integer with a value of 0
-  public void resetDice(){
-    for (Die die : Die.values()) {
-      dice.put(die, 0);
+  // loop addDie a number of times
+  public void addDice(Die die, int numOfDice){
+    for (int i = 0; i < numOfDice; i++){
+      addDie(die);
     }
-    resetSeparatedRolls();
-  }
-
-  // resets dice and sets value and mod to 0
-  public void resetRoll(){
-    resetDice();
-    resetSeparatedRolls();
-    mod = 0;
-    value = 0;
   }
 
   // reset individual rolls
@@ -130,8 +117,24 @@ public class Roll implements Rollable {
     value = 0;
   }
 
+  // Sets every Die to map to an Integer with a value of 0
+  public void resetDice(){
+    for (Die die : Die.values()) {
+      dice.put(die, 0);
+    }
+  }
+
+  // resets dice and sets value and mod to 0
+  public void resetRoll(){
+    resetDice();
+    resetProducts();
+    mod = 0;
+    name = "";
+  }
+
   // Rolls the dice of the roll with random values and returns the sum
   public int roll(){
+    resetProducts();
     value = mod;  // make the start of the roll equal to the mod
     int numDice = getNumDice();
 
@@ -157,35 +160,26 @@ public class Roll implements Rollable {
         }
       }
     }
-    setValue(value);
     return value;
   }
 
 
   /** MISC METHODS */
-
-  // String Format: *Formula = separated rolls = sum*
-  @Override
-  public String toString(){
-    String string = "";
-    int totalDice = 0;
-    int count = 0;
-
-    totalDice = getNumDice();
-
-    // start formula portion of string
-    for (Die die : dice.keySet()) {
-      Integer numOfDiceType = dice.get(die);
-      count += numOfDiceType;
-      if (numOfDiceType > 0) {
-        string = string + numOfDiceType + die;
+  public Die findFirstExistingDieInDice(){
+    for (Die die : dice.keySet()){
+      if (dice.get(die) > 0){
+        return die;
       }
-
-      if (count == totalDice)
-        break;
-      else
-        string = string + " + ";
     }
+    return null;
+  }
+
+
+  /** String METHODS */
+
+  // returns a representation of mod in the desired string form: "{sign} {mod}"
+  public String modString(){
+    String string  = "";
 
     if (mod > 0) {
       string = string + " + " + mod;
@@ -194,32 +188,134 @@ public class Roll implements Rollable {
       String modText = String.valueOf(Math.abs(mod));
       string = string + " - " + modText;
     }
-    // end formula string
 
-    // start separated rolls portion of string
-    for (int i = 0; i < separatedRolls.size(); i++) {
+    return string;
+  }
 
+  // returns the formula of the roll as a string
+  public String formulaString() {
+    String string = "";
+    int totalDice = getNumDice();
+    int count = 0;
+
+    if (totalDice == 0){
+      return String.valueOf(mod);
     }
 
-    // end separated rolls
+    for (Die die : dice.keySet()) {
+      Integer numOfDiceType = dice.get(die);
+      count += numOfDiceType;
+      if (numOfDiceType > 0) {
+        string = string + numOfDiceType + die;
 
+        if (count == totalDice)
+          break;
+        else
+          string = string + " + ";
+      }
+    }
+
+    string = string + modString();
+
+    return string;
+  }
+
+
+  // returns the values of each rolled die grouped in parentheses by die type
+  public String separatedRollString() {
+    String string = "(";
+    Die prevDieType = null;
+    Die currDieType;
+    Roll currSeparateRoll;
+
+    int numDice = getNumDice();
+
+    if (numDice == 0) {
+      return String.valueOf(mod);
+    }
+    else if (numDice == 1) {
+      string = string + (value - mod) + ")";
+    }
+    else {
+      for (int i = 0; i < separatedRolls.size(); i++) {
+        currSeparateRoll = separatedRolls.get(i);
+        currDieType = currSeparateRoll.findFirstExistingDieInDice();
+
+        if (currDieType == prevDieType || prevDieType == null) {
+          string = string + currSeparateRoll.getValue();
+          if (i + 1 < separatedRolls.size()){
+            if (separatedRolls.get(i+1).findFirstExistingDieInDice() == currDieType) {
+              string = string + " + ";
+            }
+          }
+        } else {
+          string = string + ") + (" + currSeparateRoll.getValue();
+        }
+
+        prevDieType = currDieType;
+
+        if (i == separatedRolls.size() - 1) {
+          string = string + ")";
+        }
+      }
+    }
+
+    string = string + modString();
+
+    return string;
+  }
+
+  // String Format: *Formula = separated rolls = sum*
+  @Override
+  public String toString() {
+    // start the string as the formula string
+    String string = name;
+    if (name != null && name != "") {
+      string = string + ": ";
+    }
+    string = string + formulaString();
+
+    // concatenate separtedRollsString
+    string = string + " = " + separatedRollString();
+
+    // concatenate sum to string
     string = string + " = " + value;
 
     return string;
   }
 
+  public String repeatRollsString(int numRepeats) {
+    String string = "";
+    for (int i = 0; i < numRepeats; i++) {
+      this.roll();
+      string = string + "\n" + this.toString();
+    }
+    return string;
+  }
+
   // MAIN
   public static void main(String[] args){
-    System.out.println("Hello");
-//    Roll roll_a = new Roll();
-//    roll_a.addDie(Die.D4);
-//    roll_a.addDie(Die.D6);
-//    roll_a.addDie(Die.D8);
-//
-//    Roll roll_b = new Roll();
-//
-//    System.out.println("Roll-A: " + roll_a);
-//    System.out.println(roll_b);
+    Roll roll_a = new Roll();
+    roll_a.addDie(Die.D4);
+
+    Roll roll_b = new Roll();
+    roll_b.addDie(Die.D6);
+    roll_b.addDie(Die.D8);
+    roll_b.setMod(2);
+
+    Roll roll_c = new Roll();
+    roll_c.setMod(-2);
+
+    Roll fireball = new Roll();
+    fireball.addDice(Die.D6, 8);
+    fireball.roll();
+
+
+    System.out.println(roll_a.repeatRollsString(5) + "\n");
+    System.out.println(roll_b.repeatRollsString(5) + "\n");
+    System.out.println(roll_c + "\n");
+    System.out.println(fireball);
+
   }
 
 }

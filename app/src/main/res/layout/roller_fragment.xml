@@ -225,7 +225,7 @@
                 layout="@layout/dice_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/mod_button"
+                app:layout_constraintBottom_toTopOf="@+id/modify_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/d12_button"
@@ -257,14 +257,14 @@
                 android:text="@string/roll"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/mod_button"
+                app:layout_constraintEnd_toStartOf="@+id/modify_button"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/undo_button"
                 app:layout_constraintTop_toBottomOf="@+id/d12_button" />
 
             <!--modify_button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/mod_button"
+                android:id="@+id/modify_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/navy"

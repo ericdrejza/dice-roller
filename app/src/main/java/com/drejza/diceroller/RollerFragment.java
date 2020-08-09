@@ -42,6 +42,17 @@ public class RollerFragment extends Fragment {
 
     setupDiceButtons(view);
 
+    MaterialButton d4_button = view.findViewById(R.id.d4_button);
+    MaterialButton d6_button = view.findViewById(R.id.d6_button);
+    MaterialButton d8_button = view.findViewById(R.id.d8_button);
+    MaterialButton d10_button = view.findViewById(R.id.d10_button);
+    MaterialButton d12_button = view.findViewById(R.id.d12_button);
+    MaterialButton d20_button = view.findViewById(R.id.d20_button);
+
+    MaterialButton undo_button = view.findViewById(R.id.undo_button);
+    MaterialButton roll_button = view.findViewById(R.id.roll_button);
+    MaterialButton modify_button = view.findViewById(R.id.modify_button);
+
     return view;
   }
 

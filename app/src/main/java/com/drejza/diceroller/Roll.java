@@ -1,5 +1,11 @@
 package com.drejza.diceroller;
 
+import android.icu.text.Edits;
+
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+import java.util.Iterator;
+import java.util.regex.*;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
@@ -7,11 +13,12 @@ import java.util.EnumMap;
 public class Roll implements Rollable {
 
   //public static final int CHAR_DIGIT_TO_INT_OFFSET = -48;
+  public static final String ROLL_REGEX = "";
 
-  //private static final String ROLL_REGEX_PATTERN_STRING = "\\s*(\\d*)[d]([4, 6, 8, 10, 12, 20, 100])\\s*([+, -]?)\\s*(\\d*)\\s*";
-  //     $1                $2                     $3       $4
-  //    count            dice type               sign     |mod|
-
+  private static final String ROLL_REGEX_PATTERN_STRING = "\\s*[+, -]?\\s*((\\d+)[d](\\d+))*\\s*([+, -]?)\\s*(\\d*)\\s*";
+                                                          //     $1       $2           $3          $4
+                                                          //    count     dice type    sign       |mod|
+  // [4, 6, 8, 10, 12, 20, 100]
 
   /** Class Attributes */
   private EnumMap<Die, Integer> dice;
@@ -19,6 +26,7 @@ public class Roll implements Rollable {
   private String name;
   private ArrayList<Roll> separatedRolls;
   private int value;
+  private String formula; // Will be used if someone wants to type a custom formula
 
   // TODO: Figure out what I want to use to track individual rolls
   // an int[] or an ArrayList<Integer> would be nice, but I have to make sure that I get it
@@ -31,6 +39,7 @@ public class Roll implements Rollable {
     mod = 0;
     value = 0;
     separatedRolls = new ArrayList<>();
+    formula = null;
 
     dice = new EnumMap<>(Die.class);
     for (Die die : Die.values()) {
@@ -43,8 +52,25 @@ public class Roll implements Rollable {
     mod = 0;
     separatedRolls = null;
     dice = new EnumMap<>(Die.class);
-    dice.put(die, 1);
-    value = die.roll();
+    formula = null;
+
+    for (Die a_die : Die.values()) {
+      dice.put(a_die, 0);
+    }
+    addDie(die);
+  }
+
+  public Roll(String formula) {
+    name = "";
+    mod = 0;
+    value = 0;
+    separatedRolls = new ArrayList<>();
+    this.formula = formula;
+
+    dice = new EnumMap<>(Die.class);
+    for (Die die : Die.values()) {
+      dice.put(die, 0);
+    }
   }
 
   /** GETTERS & SETTERS */
@@ -97,7 +123,7 @@ public class Roll implements Rollable {
 
   /** METHODS */
 
-  // increase the value of the Integer by 1 for the specified die type
+  // Increment the Integer mapped by the specified die type
   public void addDie(Die die){
     Integer numCurrDice = dice.get(die);
     if (numCurrDice != null){
@@ -109,6 +135,21 @@ public class Roll implements Rollable {
   public void addDice(Die die, int numOfDice){
     for (int i = 0; i < numOfDice; i++){
       addDie(die);
+    }
+  }
+
+  // Decrement the Integer mapped by the specified die type to a minimum of 0
+  public void removeDie(Die die){
+    Integer numCurrDice = dice.get(die);
+    if (numCurrDice != null && numCurrDice > 0){
+      dice.put(die, numCurrDice - 1 );
+    }
+  }
+
+  // loop addDie a number of times
+  public void removeDice(Die die, int numOfDice){
+    for (int i = 0; i < numOfDice; i++){
+      removeDie(die);
     }
   }
 
@@ -130,7 +171,7 @@ public class Roll implements Rollable {
     }
   }
 
-  // resets dice and sets value and mod to 0
+  // resets dice and products, mod to 0, and name to ""
   public void resetRoll(){
     resetDice();
     resetProducts();
@@ -143,13 +184,16 @@ public class Roll implements Rollable {
     resetProducts();
     value = mod;  // make the start of the roll equal to the mod
     int numDice = getNumDice();
+    int die_value;
 
     if (numDice == 1) {
       for (Die die : dice.keySet()) {
         Integer numOfDiceType = dice.get(die);
         if (numOfDiceType != null){
           for (int i = 0; i < numOfDiceType; i++) {
-            value += die.roll();
+            die_value = die.roll();
+            System.out.println("roll(): die_value for " + die + " = " + die_value);
+            value += die_value;
           }
         }
       }
@@ -228,7 +272,6 @@ public class Roll implements Rollable {
     return string.toString();
   }
 
-
   // returns the values of each rolled die grouped in parentheses by die type
   public String separatedRollString() {
     StringBuilder string = new StringBuilder("(");
@@ -296,9 +339,9 @@ public class Roll implements Rollable {
     StringBuilder string = new StringBuilder();
     for (int i = 0; i < numRepeats; i++) {
       this.roll();
-      string.append("\n").append(this.toString());
+      string.append(this.toString()).append("\n");
     }
-    return string.toString();
+    return string.substring(0,string.length()-1);
   }
 
   // MAIN
@@ -306,23 +349,23 @@ public class Roll implements Rollable {
     Roll roll_a = new Roll();
     roll_a.addDie(Die.D4);
 
+
     Roll roll_b = new Roll();
     roll_b.addDie(Die.D6);
     roll_b.addDie(Die.D8);
-    roll_b.setMod(2);
 
     Roll roll_c = new Roll();
     roll_c.setMod(-2);
 
+
     Roll fireball = new Roll();
     fireball.addDice(Die.D6, 8);
-    fireball.roll();
 
 
-    System.out.println(roll_a.repeatRollsString(5) + "\n");
-    System.out.println(roll_b.repeatRollsString(5) + "\n");
+    System.out.println(roll_a.repeatRollsString(3) + "\n");
+    System.out.println(roll_b.repeatRollsString(3) + "\n");
     System.out.println(roll_c + "\n");
-    System.out.println(fireball);
+//    System.out.println(fireball.repeatRollsString(1));
 
   }
 

@@ -10,8 +10,8 @@ public class Roll implements Rollable {
   public static final String ROLL_REGEX = "";
 
   private static final String ROLL_REGEX_PATTERN_STRING = "\\s*[+, -]?\\s*((\\d+)[d](\\d+))*\\s*([+, -]?)\\s*(\\d*)\\s*";
-                                                          //     $1       $2           $3          $4
-                                                          //    count     dice type    sign       |mod|
+  //     $1       $2           $3          $4
+  //    count     dice type    sign       |mod|
   // [4, 6, 8, 10, 12, 20, 100]
 
   /** Class Attributes */

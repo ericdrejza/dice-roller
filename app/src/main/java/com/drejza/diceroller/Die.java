@@ -1,49 +1,53 @@
 package com.drejza.diceroller;
 
-public enum Die implements Rollable{
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
-    D4(4, "d4"),
-    D6(6, "d6"),
-    D8(8, "d8"),
-    D10(10, "d10"),
-    D12(12, "d12"),
-    D20(20, "d20"),
-    D100(100, "d100");
+public class Die implements Rollable, Comparable<Die>{
 
     private int numSides;
-    private String name;
+    private int value;
 
-    Die(int numSides, String name){
+    Die(int numSides){
         this.numSides = numSides;
-        this.name = name;
     }
 
     public int getNumSides(){
         return this.numSides;
     }
 
-    public String getName() {
-        return name;
-    }
+    /** OVERRIDDEN METHODS */
 
-    /** MISC METHODS */
-
-    public static Die dieTypeByNumSides(int numSides){
-        for (Die die : Die.values()){
-            if (numSides == die.getNumSides()){
-                return die;
-            }
-        }
-        return null;
+    @Override
+    public int compareTo(Die other) {
+        return this.numSides - other.getNumSides();
     }
 
     @Override
-    public int roll() {
+    public int roll(){
         return (int) (Math.random()*numSides) + 1;
     }
 
     @Override
-    public String toString() {
-        return name;
+    public String toString(){
+        return "d" + numSides;
     }
+
+    public static void main(String args[]){
+        Die d4 = new Die(4);
+        Die d20 = new Die(20);
+
+        ArrayList<Die> dice =  new ArrayList<>(
+              Arrays.asList(d4, d20));
+    }
+
+    dice.sort(new Comparator<Die>(){
+        @Override
+        public int compare(Die die1, Die die2) {
+            return die1.getNumSides() - die2.getNumSides();
+        }
+    });
 }

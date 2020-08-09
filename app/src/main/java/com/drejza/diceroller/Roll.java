@@ -3,6 +3,7 @@ package com.drejza.diceroller;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Random;
 import java.util.Scanner;
@@ -18,7 +19,8 @@ public class Roll implements Rollable {
 
 
   /** Class Attributes */
-  private EnumMap<Die, Integer> dice;
+  //private EnumMap<Die, Integer> dice;
+  private ArrayList<Die> dice;
   private int mod;
   private String name;
   private ArrayList<Roll> separatedRolls;
@@ -34,29 +36,27 @@ public class Roll implements Rollable {
     name = null;
     mod = 0;
     value = 0;
-    separatedRolls = new ArrayList<Roll>();
 
-    dice = new EnumMap<>(Die.class);
+    /*dice = new EnumMap<>(Die.class);
     for (Die die : Die.values()) {
       dice.put(die, 0);
-    }
+    }*/
   }
 
   public Roll(Die die){
-    name = die.getName();
+    name = die.toString();
     mod = 0;
-    separatedRolls = null;
-    dice = new EnumMap<>(Die.class);
-    dice.put(die, 1);
+    dice = new ArrayList<>();
+    dice.add(die);
     value = die.roll();
   }
 
   /** GETTERS & SETTERS */
-  public EnumMap<Die, Integer> getDice() {
+  public ArrayList<Die> getDice() {
     return dice;
   }
 
-  public void setDice(EnumMap<Die, Integer> dice) {
+  public void setDice(ArrayList<Die> dice) {
     this.dice = dice;
   }
 
@@ -85,22 +85,15 @@ public class Roll implements Rollable {
   }
 
   public int getNumDice() {
-    int totalDice = 0;
-
-    for (Die die : dice.keySet()) {
-      if (dice.get(die) != null)
-        totalDice += dice.get(die);
-    }
-
-    return totalDice;
+    return dice.size();
   }
 
 
   /** METHODS */
 
-  // increase the value of the Integer by 1 for the specified die type
+  // a die to dice
   public void addDie(Die die){
-    dice.put(die, dice.get(die) + 1 );
+    dice.add(die);
   }
 
   // Sets every Die to map to an Integer with a value of 0

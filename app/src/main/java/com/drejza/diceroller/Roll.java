@@ -34,6 +34,8 @@ public class Roll implements Rollable {
     value = 0;
     formula = null;
 
+    dice = new ArrayList<>();
+
     /*dice = new EnumMap<>(Die.class);
     for (Die die : Die.values()) {
       dice.put(die, 0);
@@ -183,6 +185,7 @@ public class Roll implements Rollable {
     value = mod;  // make the start of the roll equal to the mod
 
     for (Die die : dice) {
+      die.roll();
       value += die.getValue();  // add the value of the current die to the value of the roll
     }
 
@@ -273,7 +276,7 @@ public class Roll implements Rollable {
           }
         }
         else {
-          string.append(prevDie.toString());
+          string.append(currDie.getValue()).append(")");
         }
         prevDie = currDie;
       }
@@ -315,9 +318,8 @@ public class Roll implements Rollable {
   // MAIN
   public static void main(String[] args){
     Roll roll_a = new Roll();
-    Die d4 = new Die(4);
-    roll_a.addDie(d4);
-
+    Die d20 = new Die(20);
+    roll_a.addDie(d20);
 
     Roll roll_b = new Roll();
     Die d6 = new Die(6);
@@ -327,6 +329,7 @@ public class Roll implements Rollable {
 
     Roll roll_c = new Roll();
     roll_c.setMod(-2);
+    roll_c.roll();
 
 
     Roll fireball = new Roll();
@@ -334,8 +337,9 @@ public class Roll implements Rollable {
 
 
     System.out.println(roll_a.repeatRollsString(3) + "\n");
-    System.out.println(roll_b.repeatRollsString(3) + "\n");
+    System.out.println(roll_b.repeatRollsString(8) + "\n");
     System.out.println(roll_c + "\n");
+
 //    System.out.println(fireball.repeatRollsString(1));
 
   }

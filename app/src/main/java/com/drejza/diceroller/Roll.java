@@ -257,33 +257,35 @@ public class Roll implements Rollable {
     if (numDice == 0) {
       return String.valueOf(mod);
     }
-    else {
-      Die prevDie = null;
-      Die currDie;
 
-      for (int i = 0; i < dice.size(); i++) {
-        currDie = dice.get(i);
-        if (prevDie == null || currDie.sameNumSides(prevDie)) {
-          string.append(currDie.getValue());
-          if (i+1 < dice.size()){
-            if (currDie.sameNumSides(dice.get(i+1))){
-              string.append(" + ");
-            }
-            else{
-              string.append(") + (");
-            }
-          }
-          else {
-            string.append(")");
-          }
-        }
-        else {
-          string.append(currDie.getValue()).append(")");
-        }
-        prevDie = currDie;
+    Die prevDie = null;
+    Die currDie;
+
+    for (int i = 0; i < dice.size(); i++) {
+      currDie = dice.get(i);
+
+      // if this is the first die (prevDie == null)
+      // or this die is the same type as the last die
+      if (prevDie == null || currDie.sameNumSides(prevDie)) {
+        string.append(currDie.getValue());
       }
+      else {
+        string.append(") + (").append(currDie.getValue());
+      }
+
+      // if there is another die in the list
+      if (i + 1 < dice.size()) {
+
+        // if the current die is the same type as the next die
+        if (currDie.sameNumSides(dice.get(i + 1))) {
+          string.append(" + ");
+        }
+      }
+
+      prevDie = currDie;
     }
 
+    string.append(")");
     string.append(modString());
 
     return string.toString();
@@ -320,16 +322,19 @@ public class Roll implements Rollable {
   // MAIN
   public static void main(String[] args){
     Roll roll_a = new Roll();
-    Die d20 = new Die(20);
-    roll_a.addDie(d20);
+    roll_a.addDie(new Die(20));
 
     Roll roll_b = new Roll();
-    Die d6 = new Die(6);
-    Die d8 = new Die(8);
-    roll_b.addDie(d6);
-    roll_b.addDie(d8);
+    roll_b.addDie(new Die(6));
+    roll_b.addDie(new Die(8));
+    roll_b.addDie(new Die(8));
+    roll_b.addDie(new Die(10));
 
     Roll roll_c = new Roll();
+    roll_c.addDie(new Die(4));
+    roll_c.addDie(new Die(6));
+    roll_c.addDie(new Die(8));
+    roll_c.addDie(new Die(10));
     roll_c.setMod(-2);
     roll_c.roll();
 
@@ -339,8 +344,8 @@ public class Roll implements Rollable {
     fireball.roll();
 
 
-    System.out.println(roll_a.repeatRollsString(3) + "\n");
-    System.out.println(roll_b.repeatRollsString(8) + "\n");
+    System.out.println(roll_a.repeatRollsString(1) + "\n");
+    System.out.println(roll_b.repeatRollsString(1) + "\n");
     System.out.println(roll_c + "\n");
     System.out.println(fireball + "\n");
 

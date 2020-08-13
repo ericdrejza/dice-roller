@@ -1,13 +1,15 @@
 package com.drejza.diceroller;
 
-import android.app.ActionBar;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,8 +17,8 @@ import com.google.android.material.button.MaterialButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.annotation.RestrictTo;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import java.util.Collections;
@@ -102,43 +104,64 @@ public class RollerFragment extends Fragment {
 
         // updating roll history
 
-        ConstraintLayout rollHistoryConstraintLayout = view.findViewById(R.id.roll_history_layout);
-        int cLayoutChildCount = rollHistoryConstraintLayout.getChildCount();
+        LinearLayout rollHistoryLinearLayout = view.findViewById(R.id.roll_history_layout);
+        int linearLayoutChildCount = rollHistoryLinearLayout.getChildCount();
         TextView currTextView = null;
 
+        for (int i = 0; i < linearLayoutChildCount; i++) {
+          currTextView = (TextView) rollHistoryLinearLayout.getChildAt(i);
+          currTextView.setTypeface(null, Typeface.NORMAL);
+        }
+
+        /*
         for (int i = 0; i < cLayoutChildCount; i++){
-          currTextView = (TextView) rollHistoryConstraintLayout.getChildAt(i);
+          currTextView = (TextView) rollHistoryLinearLayout.getChildAt(i);
           System.out.println("found TextView: " + currTextView.getText());
-          ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) currTextView.getLayoutParams();
+//          ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) currTextView.getLayoutParams();
           // Check to see if the current text view's bottom is constrained by the bottom of the parent
-          if (lp.bottomToBottom == rollHistoryConstraintLayout.getId()) {
+          if (lp.bottomToBottom == rollHistoryLinearLayout.getId()) {
             System.out.println("found bottomMostTextView: " + currTextView.getText());
             break;
           }
         }
+        */
 
         // set histroyTextView fields
         TextView mostRecentHistoryTextView = new TextView(getContext());
-        rollHistoryConstraintLayout.addView(mostRecentHistoryTextView);
+        mostRecentHistoryTextView.setGravity(Gravity.BOTTOM);
         mostRecentHistoryTextView.setId(View.generateViewId());
         mostRecentHistoryTextView.setText(roll.toString());
-        ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0,8,0,0);
         mostRecentHistoryTextView.setLayoutParams(lp);
         mostRecentHistoryTextView.setTextSize(16);
+        mostRecentHistoryTextView.setTypeface(null, Typeface.BOLD);
 
+
+        rollHistoryLinearLayout.addView(mostRecentHistoryTextView, lp);
+
+        final NestedScrollView historyScrollView = (NestedScrollView) view.findViewById(R.id.roll_history_scroll_view);
+        historyScrollView.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            historyScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+          }
+        }, 100L);
         // Set up constraints for the new TextView and the one being pushed up
         // Should just be the currentTextView bottom to top of historyTextView
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone(rollHistoryConstraintLayout);
-        constraintSet.connect(mostRecentHistoryTextView.getId(), ConstraintSet.BOTTOM,
-              ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+//        ConstraintSet constraintSet = new ConstraintSet();
+//        constraintSet.clone(rollHistoryLinearLayout);
+//        constraintSet.connect(mostRecentHistoryTextView.getId(), ConstraintSet.BOTTOM,
+//              ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
 
+        /*
         if (currTextView != null){
-//          constraintSet.connect(currTextView.getId(), ConstraintSet.BOTTOM,
-//                historyTextView.getId(), ConstraintSet.TOP);
+          constraintSet.connect(currTextView.getId(), ConstraintSet.BOTTOM,
+                historyTextView.getId(), ConstraintSet.TOP);
           constraintSet.connect(mostRecentHistoryTextView.getId(), ConstraintSet.TOP,
-                currTextView.getId(), ConstraintSet.BOTTOM, 8);
+                currTextView.getId(), ConstraintSet.BOTTOM);
+          constraintSet.applyTo(rollHistoryConstraintLayout);
           System.out.println("Bottom-most TextView: " + currTextView.getId());
           System.out.println("New bottom TextView: " + mostRecentHistoryTextView.getId());
         }
@@ -147,6 +170,7 @@ public class RollerFragment extends Fragment {
           constraintSet.connect(mostRecentHistoryTextView.getId(), ConstraintSet.TOP,
                 ConstraintSet.PARENT_ID, ConstraintSet.TOP);
         }
+        */
 
         /*
         <TextView
@@ -165,8 +189,8 @@ public class RollerFragment extends Fragment {
     clear_history_button.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view1) {
-        ConstraintLayout rollHistoryConstraintLayout = view.findViewById(R.id.roll_history_layout);
-        rollHistoryConstraintLayout.removeAllViews();
+        LinearLayout rollHistoryLayout = view.findViewById(R.id.roll_history_layout);
+        rollHistoryLayout.removeAllViews();
       }
     });
 

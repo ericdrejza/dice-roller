@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="1.0">
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/roll_history"
+            android:id="@+id/roll_history_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/roll_history_scrollview_height"
             android:layout_marginHorizontal="8dp"
@@ -31,6 +31,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread">
 
+            <LinearLayout
+                android:id="@+id/roll_history_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:orientation="vertical">
+
+
+            </LinearLayout>
+
+            <!--
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/roll_history_layout"
                 android:layout_width="match_parent"
@@ -41,6 +52,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent">
             </androidx.constraintlayout.widget.ConstraintLayout>
+            -->
 
         </androidx.core.widget.NestedScrollView>
 
@@ -58,7 +70,7 @@
             app:layout_constraintBottom_toTopOf="@+id/formula_input"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/roll_history" />
+            app:layout_constraintTop_toBottomOf="@+id/roll_history_scroll_view" />
 
         <TextView
             android:id="@+id/roll_value_text_view"
@@ -68,8 +80,9 @@
             android:layout_marginBottom="8dp"
             android:minWidth="50dp"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="@color/gold"
             android:textSize="30sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/formula_input"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

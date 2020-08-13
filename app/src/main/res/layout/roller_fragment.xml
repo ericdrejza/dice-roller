@@ -40,33 +40,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent">
-
-                <TextView
-                    android:id="@+id/history_line3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:text="@string/history"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toTopOf="@id/history_line2" />
-
-                <TextView
-                    android:id="@+id/history_line2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:text="@string/history"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toTopOf="@id/history_line1" />
-
-                <TextView
-                    android:id="@+id/history_line1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:text="@string/history"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@id/roll_history_layout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>
@@ -88,12 +61,12 @@
             app:layout_constraintTop_toBottomOf="@+id/roll_history" />
 
         <TextView
-            android:id="@+id/roll_value"
+            android:id="@+id/roll_value_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
-            android:text="@string/roll"
+            android:minWidth="50dp"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="30sp"
@@ -114,7 +87,7 @@
             android:entries="@array/roll_options"
             app:layout_constraintBottom_toTopOf="@+id/formula_input"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/roll_value"
+            app:layout_constraintStart_toEndOf="@+id/roll_value_text_view"
             app:layout_constraintTop_toBottomOf="@+id/clear_history_button" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -129,7 +102,7 @@
             app:layout_constraintBottom_toTopOf="@+id/dice_table"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/roll_value">
+            app:layout_constraintTop_toBottomOf="@+id/roll_value_text_view">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/formula_edit_text"

@@ -57,6 +57,8 @@ public class Roll implements Rollable {
     value = 0;
     this.formula = formula;
 
+    // TODO
+
     dice = new ArrayList<>();
   }
 
@@ -157,9 +159,9 @@ public class Roll implements Rollable {
     return countRemoved;
   }
 
+
   // reset products of roll
   public void resetProducts(){
-    // TODO: call Die method to set all dice element values to 0
     for (Die die : dice) {
       die.setValue(0);
     }
@@ -334,11 +336,13 @@ public class Roll implements Rollable {
 
     Roll fireball = new Roll();
     fireball.addDice(6, 8);
+    fireball.roll();
 
 
     System.out.println(roll_a.repeatRollsString(3) + "\n");
     System.out.println(roll_b.repeatRollsString(8) + "\n");
     System.out.println(roll_c + "\n");
+    System.out.println(fireball + "\n");
 
 //    System.out.println(fireball.repeatRollsString(1));
 

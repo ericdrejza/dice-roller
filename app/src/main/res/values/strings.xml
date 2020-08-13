@@ -10,6 +10,7 @@
     <string name="button_d20">D20</string>
 
     <string name="button_undo">Undo</string>
+    <string name="cleared_toast">Cleared</string>
     <string name="button_add">Add</string>
     <string name="button_modify">Modify</string>
     <string name="button_clear_history">Clear History</string>

@@ -79,6 +79,7 @@ public class RollerFragment extends Fragment {
           roll.removeDie(lastDie);
         }
         updateFormulaEditText(formula_edit_text);
+        unfocusEditText(formula_edit_text);
       }
     });
     // set undo onLongClickListener
@@ -91,6 +92,7 @@ public class RollerFragment extends Fragment {
         updateFormulaEditText(formula_edit_text);
         updateRollValueTextView(rollValueTextView);
         Toast.makeText(getContext(), R.string.cleared_toast, Toast.LENGTH_SHORT).show();
+        unfocusEditText(formula_edit_text);
         return true;
       }
     });
@@ -99,89 +101,7 @@ public class RollerFragment extends Fragment {
     roll_button.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View viewOther) {
-        roll.roll();
-        updateRollValueTextView(rollValueTextView);
-
-        // updating roll history
-
-        LinearLayout rollHistoryLinearLayout = view.findViewById(R.id.roll_history_layout);
-        int linearLayoutChildCount = rollHistoryLinearLayout.getChildCount();
-        TextView currTextView = null;
-
-        for (int i = 0; i < linearLayoutChildCount; i++) {
-          currTextView = (TextView) rollHistoryLinearLayout.getChildAt(i);
-          currTextView.setTypeface(null, Typeface.NORMAL);
-        }
-
-        /*
-        for (int i = 0; i < cLayoutChildCount; i++){
-          currTextView = (TextView) rollHistoryLinearLayout.getChildAt(i);
-          System.out.println("found TextView: " + currTextView.getText());
-//          ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) currTextView.getLayoutParams();
-          // Check to see if the current text view's bottom is constrained by the bottom of the parent
-          if (lp.bottomToBottom == rollHistoryLinearLayout.getId()) {
-            System.out.println("found bottomMostTextView: " + currTextView.getText());
-            break;
-          }
-        }
-        */
-
-        // set histroyTextView fields
-        TextView mostRecentHistoryTextView = new TextView(getContext());
-        mostRecentHistoryTextView.setGravity(Gravity.BOTTOM);
-        mostRecentHistoryTextView.setId(View.generateViewId());
-        mostRecentHistoryTextView.setText(roll.toString());
-        //ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0,8,0,0);
-        mostRecentHistoryTextView.setLayoutParams(lp);
-        mostRecentHistoryTextView.setTextSize(16);
-        mostRecentHistoryTextView.setTypeface(null, Typeface.BOLD);
-
-
-        rollHistoryLinearLayout.addView(mostRecentHistoryTextView, lp);
-
-        final NestedScrollView historyScrollView = (NestedScrollView) view.findViewById(R.id.roll_history_scroll_view);
-        historyScrollView.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            historyScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-          }
-        }, 100L);
-        // Set up constraints for the new TextView and the one being pushed up
-        // Should just be the currentTextView bottom to top of historyTextView
-//        ConstraintSet constraintSet = new ConstraintSet();
-//        constraintSet.clone(rollHistoryLinearLayout);
-//        constraintSet.connect(mostRecentHistoryTextView.getId(), ConstraintSet.BOTTOM,
-//              ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-
-        /*
-        if (currTextView != null){
-          constraintSet.connect(currTextView.getId(), ConstraintSet.BOTTOM,
-                historyTextView.getId(), ConstraintSet.TOP);
-          constraintSet.connect(mostRecentHistoryTextView.getId(), ConstraintSet.TOP,
-                currTextView.getId(), ConstraintSet.BOTTOM);
-          constraintSet.applyTo(rollHistoryConstraintLayout);
-          System.out.println("Bottom-most TextView: " + currTextView.getId());
-          System.out.println("New bottom TextView: " + mostRecentHistoryTextView.getId());
-        }
-        else {
-          // This would be the case if there were no TextViews present yet
-          constraintSet.connect(mostRecentHistoryTextView.getId(), ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-        }
-        */
-
-        /*
-        <TextView
-                    android:id="@+id/history_line1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:text="@string/history"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@id/roll_history_layout" />
-         */
+        rollAndUpdate(view, rollValueTextView);
       }
     });
 
@@ -234,6 +154,7 @@ public class RollerFragment extends Fragment {
     for (int i = 0; i < diceButtons.length; i++) {
       diceButtons[i].setText(dice_button_resource_ids[i]);
       setDieButtonOnClickListener(diceButtons[i], dice_button_values[i], view);
+      setDieButtonOnLongClickListener(diceButtons[i], dice_button_values[i], view);
     }
 
   }
@@ -245,12 +166,77 @@ public class RollerFragment extends Fragment {
       @Override
       public void onClick(View view) {
         Die die = new Die(dieType);
+        EditText formula_edit_text = (EditText) parentView.findViewById(R.id.formula_edit_text);
         diceStack.push(die);
         roll.addDie(die);
         Collections.sort(roll.getDice());
-        updateFormulaEditText((EditText) parentView.findViewById(R.id.formula_edit_text));
+        updateFormulaEditText(formula_edit_text);
+        unfocusEditText(formula_edit_text);
       }
     });
+  }
+
+  public void setDieButtonOnLongClickListener(MaterialButton button, final int dieType, final View parentView){
+    button.setOnLongClickListener( new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View view) {
+        Roll tempRoll = roll;
+        roll = new Roll(new Die(dieType));
+        EditText formula_edit_text = (EditText) parentView.findViewById(R.id.formula_edit_text);
+
+        rollAndUpdate(parentView, formula_edit_text );
+
+        roll = tempRoll;
+        updateFormulaEditText(formula_edit_text);
+        unfocusEditText(formula_edit_text);
+        return true;
+      }
+    });
+  }
+
+
+  public void rollAndUpdate(View view, TextView rollValueTextView){
+    roll.roll();
+    updateRollValueTextView(rollValueTextView);
+
+    // updating roll history
+
+    LinearLayout rollHistoryLinearLayout = view.findViewById(R.id.roll_history_layout);
+    int linearLayoutChildCount = rollHistoryLinearLayout.getChildCount();
+    TextView currTextView = null;
+
+    for (int i = 0; i < linearLayoutChildCount; i++) {
+      currTextView = (TextView) rollHistoryLinearLayout.getChildAt(i);
+      currTextView.setTypeface(null, Typeface.NORMAL);
+    }
+
+    // set histroyTextView fields
+    TextView mostRecentHistoryTextView = new TextView(getContext());
+    mostRecentHistoryTextView.setGravity(Gravity.BOTTOM);
+    mostRecentHistoryTextView.setId(View.generateViewId());
+    mostRecentHistoryTextView.setText(roll.toString());
+    //ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    lp.setMargins(0,8,0,0);
+    mostRecentHistoryTextView.setLayoutParams(lp);
+    mostRecentHistoryTextView.setTextSize(16);
+    mostRecentHistoryTextView.setTypeface(null, Typeface.BOLD);
+
+
+    rollHistoryLinearLayout.addView(mostRecentHistoryTextView, lp);
+
+    final NestedScrollView historyScrollView = (NestedScrollView) view.findViewById(R.id.roll_history_scroll_view);
+    historyScrollView.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        historyScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+      }
+    }, 100L);
+  }
+
+  // Unfocus the EditText(s)
+  public void unfocusEditText(EditText editText){
+    editText.clearFocus();
   }
 
   // Update formula based on Roll toString()

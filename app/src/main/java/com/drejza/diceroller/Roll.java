@@ -43,7 +43,7 @@ public class Roll implements Rollable {
   }
 
   public Roll(Die die){
-    name = die.toString();
+    name = "";
     mod = 0;
     dice = new ArrayList<>();
     formula = null;

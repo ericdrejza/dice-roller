@@ -33,6 +33,7 @@
 
     <string name="button_navBarMiddle">Roller</string>
     <string name="button_navBarRight">List</string>
+
     <string name="history">History</string>
     <string name="hint_roll_formula">Roll Formula</string>
 
@@ -46,11 +47,21 @@
         <item>Export</item>
     </string-array>
 
+    <string name="roll_options_prompt">Roll Options</string>
     <string-array name="roll_options">
         <item>""</item>
         <item>Advantage</item>
         <item>Disadvantage</item>
     </string-array>
+
+    <!-- Advantage States -->
+    <string name="normal">Normal</string>
+    <string name="advantage">Advantage</string>
+    <string name="disadvantage">Disadvantage</string>
+    <string name="normal_abbreviation">NORM</string>
+    <string name="advantage_abbreviation">ADV</string>
+    <string name="disadvantage_abbreviation">DIS</string>
+
 
     <!-- Nav Strings -->
     <string name="list">List</string>

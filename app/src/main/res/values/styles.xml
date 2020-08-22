@@ -16,9 +16,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_marginHorizontal">24dp</item>
         <item name="rippleColor">@color/gold</item>
-        <item name="android:colorActivatedHighlight">@color/purple</item>
-        <item name="android:colorPressedHighlight">@color/red</item>
-
+        <item name="android:maxHeight">@dimen/die_button_max_height</item>
     </style>
 
 </resources>

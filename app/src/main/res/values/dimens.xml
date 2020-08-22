@@ -3,4 +3,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="roll_history_scrollview_height">172dp</dimen>
+    <dimen name="dice_buttons_grid_layout_height">164dp</dimen>
+    <dimen name="die_button_max_height">15dp</dimen>
+    <dimen name="advantage_state_button_height">150dp</dimen>
 </resources>

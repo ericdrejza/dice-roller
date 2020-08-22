@@ -194,6 +194,26 @@ public class Roll implements Rollable {
     return value;
   }
 
+  // Rolls any d20 dice with advantage - take the highest of all the d20's
+  public int rollAdvantage(){
+    resetProducts();
+    value = mod;
+
+    Die maxDie = null;
+
+    for (Die die : dice) {
+      die.roll();
+      if ((die.getNumSides() == 20) && ((maxDie == null) || die.getValue() > maxDie.getValue())){
+        maxDie = die;
+      }
+    }
+
+    if (maxDie != null) {
+      value += maxDie.getValue();
+    }
+
+    return value;
+  }
 
   /** MISC METHODS */
 

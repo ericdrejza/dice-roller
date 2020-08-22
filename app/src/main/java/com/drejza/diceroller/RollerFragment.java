@@ -2,14 +2,17 @@ package com.drejza.diceroller;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +20,7 @@ import com.google.android.material.button.MaterialButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
@@ -37,15 +40,18 @@ public class RollerFragment extends Fragment {
   private String formula;
   private Roll roll;
 
+  private AdvantageState advantageState;
+
   @Override
   public void onCreate(Bundle savedInstanceState){
     super.onCreate(savedInstanceState);
 
     getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-    diceStack = new Stack<Die>();
+    diceStack = new Stack<>();
     formula = "";
     roll = new Roll();
+    advantageState = AdvantageState.NORM;
     //rollHistory = new ArrayList<String>();
   }
 
@@ -66,7 +72,9 @@ public class RollerFragment extends Fragment {
     MaterialButton undo_button = view.findViewById(R.id.undo_button);
     MaterialButton roll_button = view.findViewById(R.id.roll_button);
     MaterialButton modify_button = view.findViewById(R.id.modify_button);
+    final MaterialButton advantage_state_button = view.findViewById(R.id.advantage_state_button);
     MaterialButton clear_history_button = view.findViewById(R.id.clear_history_button);
+
 
     // Setting OnClickListeners for Action Buttons
 
@@ -105,6 +113,57 @@ public class RollerFragment extends Fragment {
       }
     });
 
+    roll_button.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        // Create a temporary TextView to see the value being typed (limit it to input type numbers)
+
+        // Call rollAndUpdate a number of times equal to the number typed if it is above 0
+
+        return true;
+      }
+    });
+
+    modify_button.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        // Create a temporary TextView to see the value being typed (limit it to input type numbers)
+
+        // modify the formula with a number
+      }
+    });
+
+    advantage_state_button.setText(R.string.normal_abbreviation);
+
+    advantage_state_button.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        switch (advantageState) {
+          case NORM:
+            advantageState = AdvantageState.ADV;
+            advantage_state_button.setText(R.string.advantage_abbreviation);
+            Toast.makeText(getContext(),R.string.advantage,Toast.LENGTH_SHORT).show();
+            advantage_state_button.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.dark_green));
+            break;
+
+          case ADV:
+            advantageState = AdvantageState.DIS;
+            advantage_state_button.setText(R.string.disadvantage_abbreviation);
+            Toast.makeText(getContext(),R.string.disadvantage,Toast.LENGTH_SHORT).show();
+            advantage_state_button.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.maroon));
+            break;
+
+          case DIS:
+            advantageState = AdvantageState.NORM;
+            Toast.makeText(getContext(),R.string.normal,Toast.LENGTH_SHORT).show();
+            advantage_state_button.setText(R.string.normal_abbreviation);
+            advantage_state_button.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+            break;
+        }
+//        advantage_state_button.setHeight(((View) view.findViewById(R.id.d20_button)).getHeight()+400);
+      }
+    });
+
     // set clear history OnClickListener
     clear_history_button.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -113,7 +172,6 @@ public class RollerFragment extends Fragment {
         rollHistoryLayout.removeAllViews();
       }
     });
-
 
     return view;
   } // Close onCreateView
@@ -183,8 +241,9 @@ public class RollerFragment extends Fragment {
         Roll tempRoll = roll;
         roll = new Roll(new Die(dieType));
         EditText formula_edit_text = (EditText) parentView.findViewById(R.id.formula_edit_text);
+        TextView rollValueTextView = (TextView) parentView.findViewById(R.id.roll_value_text_view);
 
-        rollAndUpdate(parentView, formula_edit_text );
+        rollAndUpdate(parentView, rollValueTextView);
 
         roll = tempRoll;
         updateFormulaEditText(formula_edit_text);
@@ -196,6 +255,8 @@ public class RollerFragment extends Fragment {
 
 
   public void rollAndUpdate(View view, TextView rollValueTextView){
+
+
     roll.roll();
     updateRollValueTextView(rollValueTextView);
 
@@ -203,7 +264,7 @@ public class RollerFragment extends Fragment {
 
     LinearLayout rollHistoryLinearLayout = view.findViewById(R.id.roll_history_layout);
     int linearLayoutChildCount = rollHistoryLinearLayout.getChildCount();
-    TextView currTextView = null;
+    TextView currTextView;
 
     for (int i = 0; i < linearLayoutChildCount; i++) {
       currTextView = (TextView) rollHistoryLinearLayout.getChildAt(i);
@@ -255,4 +316,8 @@ public class RollerFragment extends Fragment {
     }
     tv.setText(rollValue);
   }
+}
+
+enum AdvantageState {
+  NORM, ADV, DIS
 }

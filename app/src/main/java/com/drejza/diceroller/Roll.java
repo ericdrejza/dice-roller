@@ -15,7 +15,7 @@ public class Roll implements Rollable {
   // [4, 6, 8, 10, 12, 20, 100]
 
   /** Class Attributes */
-  //private EnumMap<Die, Integer> dice;
+  private AdvantageState advantageState;
   private ArrayList<Die> dice;
   private String formula; // Will be used if someone wants to type a custom formula
   private int mod;
@@ -29,40 +29,46 @@ public class Roll implements Rollable {
 
   /** Contructors */
   public Roll(){
-    name = "";
-    mod = 0;
-    value = 0;
+    advantageState = AdvantageState.NORM;
     formula = null;
+    mod = 0;
+    name = "";
+    value = 0;
 
     dice = new ArrayList<>();
-
-    /*dice = new EnumMap<>(Die.class);
-    for (Die die : Die.values()) {
-      dice.put(die, 0);
-    }*/
   }
 
   public Roll(Die die){
-    name = "";
-    mod = 0;
+    advantageState = AdvantageState.NORM;
     dice = new ArrayList<>();
     formula = null;
+    mod = 0;
+    name = "";
 
     addDie(die);
   }
 
   public Roll(String formula) {
-    name = "";
-    mod = 0;
-    value = 0;
-    this.formula = formula;
-
-    // TODO
-
     dice = new ArrayList<>();
+    this.formula = formula;
+    mod = 0;
+    name = "";
+    value = 0;
+
+    // TODO: create dice via formula. Probably don't even need the formula field in this class
+
   }
 
+
   /** GETTERS & SETTERS */
+  public AdvantageState getAdvantageState() {
+    return advantageState;
+  }
+
+  public void setAdvantageState(AdvantageState advantageState) {
+    this.advantageState = advantageState;
+  }
+
   public ArrayList<Die> getDice() {
     return dice;
   }
@@ -186,32 +192,51 @@ public class Roll implements Rollable {
     resetProducts();
     value = mod;  // make the start of the roll equal to the mod
 
-    for (Die die : dice) {
-      die.roll();
-      value += die.getValue();  // add the value of the current die to the value of the roll
-    }
-
-    return value;
-  }
-
-  // Rolls any d20 dice with advantage - take the highest of all the d20's
-  public int rollAdvantage(){
-    resetProducts();
-    value = mod;
-
-    Die maxDie = null;
-
-    for (Die die : dice) {
-      die.roll();
-      if ((die.getNumSides() == 20) && ((maxDie == null) || die.getValue() > maxDie.getValue())){
-        maxDie = die;
+    // Normal Roll
+    if (advantageState == AdvantageState.NORM){
+      for (Die die : dice) {
+        die.roll();
+        value += die.getValue();  // add the value of the current die to the value of the roll
       }
     }
 
-    if (maxDie != null) {
-      value += maxDie.getValue();
+    // Advantage Roll
+    else if (advantageState == AdvantageState.ADV || advantageState == AdvantageState.ADVX2){
+      Die maxDie = null;
+
+      for (Die die : dice) {
+        die.roll();
+        if ((die.getNumSides() == 20) && ((maxDie == null) || die.getValue() > maxDie.getValue())){
+          maxDie = die;
+        }
+        else if (die.getNumSides() != 20) {
+          value += die.getValue();
+        }
+      }
+
+      if (maxDie != null) {
+        value += maxDie.getValue();
+      }
     }
 
+    // Disadvantage Roll
+    else if (advantageState == AdvantageState.DIS){
+      Die minDie = null;
+
+      for (Die die : dice) {
+        die.roll();
+        if ((die.getNumSides() == 20) && ((minDie == null) || die.getValue() < minDie.getValue())){
+          minDie = die;
+        }
+        else if (die.getNumSides() != 20) {
+          value += die.getValue();
+        }
+      }
+
+      if (minDie != null) {
+        value += minDie.getValue();
+      }
+    }
     return value;
   }
 

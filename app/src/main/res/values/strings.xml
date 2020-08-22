@@ -57,9 +57,11 @@
     <!-- Advantage States -->
     <string name="normal">Normal</string>
     <string name="advantage">Advantage</string>
+    <string name="advantage_x2">Advantage x2</string>
     <string name="disadvantage">Disadvantage</string>
     <string name="normal_abbreviation">NORM</string>
     <string name="advantage_abbreviation">ADV</string>
+    <string name="advantage_x2_abbreviation">ADV\nx2</string>
     <string name="disadvantage_abbreviation">DIS</string>
 
 

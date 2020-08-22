@@ -40,7 +40,6 @@ public class RollerFragment extends Fragment {
   private String formula;
   private Roll roll;
 
-  private AdvantageState advantageState;
 
   @Override
   public void onCreate(Bundle savedInstanceState){
@@ -51,7 +50,6 @@ public class RollerFragment extends Fragment {
     diceStack = new Stack<>();
     formula = "";
     roll = new Roll();
-    advantageState = AdvantageState.NORM;
     //rollHistory = new ArrayList<String>();
   }
 
@@ -109,7 +107,9 @@ public class RollerFragment extends Fragment {
     roll_button.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View viewOther) {
-        rollAndUpdate(view, rollValueTextView);
+        if (!roll.getDice().isEmpty()){
+          rollAndUpdate(view, rollValueTextView);
+        }
       }
     });
 
@@ -138,29 +138,41 @@ public class RollerFragment extends Fragment {
     advantage_state_button.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        switch (advantageState) {
+        switch (roll.getAdvantageState()) {
           case NORM:
-            advantageState = AdvantageState.ADV;
+          case ADVX2:
+            roll.setAdvantageState(AdvantageState.ADV);
             advantage_state_button.setText(R.string.advantage_abbreviation);
             Toast.makeText(getContext(),R.string.advantage,Toast.LENGTH_SHORT).show();
             advantage_state_button.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.dark_green));
             break;
 
           case ADV:
-            advantageState = AdvantageState.DIS;
+            roll.setAdvantageState(AdvantageState.DIS);
             advantage_state_button.setText(R.string.disadvantage_abbreviation);
             Toast.makeText(getContext(),R.string.disadvantage,Toast.LENGTH_SHORT).show();
             advantage_state_button.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.maroon));
             break;
 
           case DIS:
-            advantageState = AdvantageState.NORM;
+            roll.setAdvantageState(AdvantageState.NORM);
             Toast.makeText(getContext(),R.string.normal,Toast.LENGTH_SHORT).show();
             advantage_state_button.setText(R.string.normal_abbreviation);
             advantage_state_button.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
             break;
         }
 //        advantage_state_button.setHeight(((View) view.findViewById(R.id.d20_button)).getHeight()+400);
+      }
+    });
+
+    advantage_state_button.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        roll.setAdvantageState(AdvantageState.ADVX2);
+        advantage_state_button.setText(R.string.advantage_x2_abbreviation);
+        Toast.makeText(getContext(),R.string.advantage_x2,Toast.LENGTH_SHORT).show();
+        advantage_state_button.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.green));
+        return true;
       }
     });
 
@@ -180,7 +192,7 @@ public class RollerFragment extends Fragment {
   /** BUTTON METHODS */
 
   // Sets fields on the buttons that aren't able to be done in xml due to using <include> tag
-  public void setupDiceButtons(View view) {
+  public void setupDiceButtons(final View view) {
     // Dynamically add the correct die types to each of these DiceButtons and
     // set the appropriate text to the buttons too
 
@@ -214,6 +226,34 @@ public class RollerFragment extends Fragment {
       setDieButtonOnClickListener(diceButtons[i], dice_button_values[i], view);
       setDieButtonOnLongClickListener(diceButtons[i], dice_button_values[i], view);
     }
+
+    d20_button.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        Roll tempRoll = roll;
+
+        roll = new Roll(new Die(20));
+        roll.setAdvantageState(tempRoll.getAdvantageState());
+
+        switch (roll.getAdvantageState()) {
+          case ADVX2:
+            roll.addDie(new Die(20));
+          case ADV:
+          case DIS:
+            roll.addDie(new Die(20));
+        }
+
+        EditText formula_edit_text = (EditText) view.findViewById(R.id.formula_edit_text);
+        TextView rollValueTextView = (TextView) view.findViewById(R.id.roll_value_text_view);
+
+        rollAndUpdate(view, rollValueTextView);
+
+        roll = tempRoll;
+        updateFormulaEditText(formula_edit_text);
+        unfocusEditText(formula_edit_text);
+        return true;
+      }
+    });
 
   }
 
@@ -316,8 +356,4 @@ public class RollerFragment extends Fragment {
     }
     tv.setText(rollValue);
   }
-}
-
-enum AdvantageState {
-  NORM, ADV, DIS
 }
